@@ -1,0 +1,70 @@
+﻿@page "/tarefa/{id}"
+@inject ControleTarefas.Data.ITarefaService TarefaService
+@inject NavigationManager Navigation
+
+
+
+<h1>Editar Tarefa</h1>
+<br />
+
+<EditForm Model="tarefa" OnSubmit="@SubmitForm">
+    <div class="form-group">
+        <label>id</label>
+        <input id="id" class="form-control" name="id_Tarefa" value="@tarefa.id_Tarefa" readonly/>
+    </div>
+    <div class="form-group">
+        <label>Título</label>
+        <InputText id="id" class="form-control" name="ds_Titulo" @bind-Value="tarefa.ds_Titulo"> </InputText>      
+    </div>
+    <div class="form-group">
+        <label>Descrição</label>
+        <InputText id="id" class="form-control" name="ds_Descricao" @bind-Value="tarefa.ds_Descricao"> </InputText>      
+    </div>
+    <div class="form-group">
+        <label>Data Tarefa</label>
+        <InputText id="id" class="form-control" name="dt_Tarefa" @bind-Value="tarefa.dt_Tarefa"> </InputText>      
+    </div>
+    <div class="form-group">
+        <label>Hora Início</label>
+        <InputText id="id" class="form-control" name="hr_Inicio" @bind-Value="tarefa.hr_Inicio"> </InputText>      
+    </div>
+    <div class="form-group">
+        <label>Hora Fim</label>
+        <InputText id="id" class="form-control" name="hr_Fim" @bind-Value="tarefa.hr_Fim"> </InputText>      
+    </div>
+    <br /><button type="submit" class="btn btn-success">Gravar</button>
+</EditForm>
+
+
+
+@code {
+    [Parameter]
+    public string id { get; set; }
+
+    private ControleTarefas.Data.Tarefa tarefa { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (!string.IsNullOrEmpty(id) & id == "0")
+        {
+            tarefa = new Data.Tarefa();
+        }
+        else
+        {
+            tarefa = TarefaService.GetTarefa(Guid.Parse(id));
+        }
+    }
+
+    private void SubmitForm()
+    {
+        if(tarefa.id_Tarefa == Guid.Empty)
+        {
+            TarefaService.AddTarefa(tarefa);
+        }
+        else
+        {
+            TarefaService.UpdateTarefa(tarefa);
+        }
+        Navigation.NavigateTo("tarefas");
+    }
+}

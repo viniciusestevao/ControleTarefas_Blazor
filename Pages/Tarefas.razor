@@ -1,0 +1,58 @@
+﻿@page "/tarefas"
+@inject ControleTarefas.Data.ITarefaService TarefaService;
+
+<h3>Agenda de Tarefas</h3>
+<br />
+ 
+<a href="tarefa/0"><button class="btn btn-primary">Nova Tarefa</button></a>
+<br />
+
+<table class="table">
+    <thead>
+        <tr>
+            <td>ID</td>
+            <td>Título</td>
+            <td>Descrição</td>
+            <td>Data</td>
+            <td>Hora Início</td>
+            <td>Hora Fim</td>
+            <td>Finalizada ?</td>
+            <td></td><td></td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var tarefa in tarefas){
+            <tr>
+                <td>@tarefa.id_Tarefa</td>
+                <td>@tarefa.ds_Titulo</td>
+                <td>@tarefa.ds_Descricao</td>
+                <td>@tarefa.dt_Tarefa</td>
+                <td>@tarefa.hr_Inicio</td>
+                <td>@tarefa.hr_Fim</td>
+                <td>@tarefa.tp_Finalizada</td>
+                <td>
+                    <a href="tarefa/@tarefa.id_Tarefa"><button class="btn btn-primary">Editar</button></a>
+                </td>
+                <td>
+                    <button class="btn btn-danger" @onclick = "@(e=> OnDelete(tarefa.id_Tarefa))">Excluir</button>
+                </td>
+            </tr>
+        } 
+    </tbody>
+</table>
+
+
+
+@code {
+    private List<ControleTarefas.Data.Tarefa> tarefas;
+
+    protected override void OnInitialized()
+    {
+        tarefas = TarefaService.GetTarefas();
+    }
+
+    private void OnDelete(Guid id)
+    {
+        TarefaService.DeleteTarefa(id);
+    }
+}
