@@ -10,12 +10,12 @@
 <table class="table">
     <thead>
         <tr>
-            <td>ID</td>
             <td>Título</td>
             <td>Descrição</td>
             <td>Data</td>
             <td>Hora Início</td>
             <td>Hora Fim</td>
+            <td>Prioridade</td>
             <td>Finalizada ?</td>
             <td></td><td></td>
         </tr>
@@ -23,18 +23,18 @@
     <tbody>
         @foreach(var tarefa in tarefas){
             <tr>
-                <td>@tarefa.id_Tarefa</td>
                 <td>@tarefa.ds_Titulo</td>
                 <td>@tarefa.ds_Descricao</td>
                 <td>@tarefa.dt_Tarefa</td>
                 <td>@tarefa.hr_Inicio</td>
                 <td>@tarefa.hr_Fim</td>
+                <td>@tarefa.cd_Prioridade</td>
                 <td>@tarefa.tp_Finalizada</td>
                 <td>
-                    <a href="tarefa/@tarefa.id_Tarefa"><button class="btn btn-primary">Editar</button></a>
+                    <a href="tarefa/@tarefa.Id_Tarefa"><button class="btn btn-primary">Editar</button></a>
                 </td>
                 <td>
-                    <button class="btn btn-danger" @onclick = "@(e=> OnDelete(tarefa.id_Tarefa))">Excluir</button>
+                    <button class="btn btn-danger" @onclick = "@(e=> OnDelete(tarefa.Id_Tarefa))">Excluir</button>
                 </td>
             </tr>
         } 
@@ -51,7 +51,7 @@
         tarefas = TarefaService.GetTarefas();
     }
 
-    private void OnDelete(Guid id)
+    private void OnDelete(int id)
     {
         TarefaService.DeleteTarefa(id);
     }

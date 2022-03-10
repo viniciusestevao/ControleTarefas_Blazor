@@ -9,28 +9,32 @@
 
 <EditForm Model="tarefa" OnSubmit="@SubmitForm">
     <div class="form-group">
-        <label>id</label>
-        <input id="id" class="form-control" name="id_Tarefa" value="@tarefa.id_Tarefa" readonly/>
-    </div>
-    <div class="form-group">
         <label>Título</label>
-        <InputText id="id" class="form-control" name="ds_Titulo" @bind-Value="tarefa.ds_Titulo"> </InputText>      
+        <InputText id="id" class="form-control" name="ds_Titulo" @bind="tarefa.ds_Titulo"> </InputText>      
     </div>
     <div class="form-group">
         <label>Descrição</label>
-        <InputText id="id" class="form-control" name="ds_Descricao" @bind-Value="tarefa.ds_Descricao"> </InputText>      
+        <InputText id="id" class="form-control" name="ds_Descricao" @bind="tarefa.ds_Descricao"> </InputText>      
     </div>
     <div class="form-group">
         <label>Data Tarefa</label>
-        <InputText id="id" class="form-control" name="dt_Tarefa" @bind-Value="tarefa.dt_Tarefa"> </InputText>      
+        <InputText id="id" class="form-control" name="dt_Tarefa" @bind="tarefa.dt_Tarefa"> </InputText>      
     </div>
     <div class="form-group">
         <label>Hora Início</label>
-        <InputText id="id" class="form-control" name="hr_Inicio" @bind-Value="tarefa.hr_Inicio"> </InputText>      
+        <InputText id="id" class="form-control" name="hr_Inicio" @bind="tarefa.hr_Inicio"> </InputText>      
     </div>
     <div class="form-group">
         <label>Hora Fim</label>
-        <InputText id="id" class="form-control" name="hr_Fim" @bind-Value="tarefa.hr_Fim"> </InputText>      
+        <InputText id="id" class="form-control" name="hr_Fim" @bind="tarefa.hr_Fim"> </InputText>      
+    </div>
+        <div class="form-group">
+        <label>Prioridade</label>
+        <InputText id="id" class="form-control" name="cd_Prioridade" @bind="tarefa.cd_Prioridade"> </InputText>      
+    </div>
+        <div class="form-group">
+        <label>Finalizada ?</label>
+        <InputText id="id" class="form-control" name="tp_Finalizada" @bind="tarefa.tp_Finalizada"> </InputText>      
     </div>
     <br /><button type="submit" class="btn btn-success">Gravar</button>
 </EditForm>
@@ -39,25 +43,28 @@
 
 @code {
     [Parameter]
-    public string id { get; set; }
+    public int id { get; set; }
 
     private ControleTarefas.Data.Tarefa tarefa { get; set; }
 
+
     protected override void OnInitialized()
     {
-        if (!string.IsNullOrEmpty(id) & id == "0")
+        if (id == 0)
         {
             tarefa = new Data.Tarefa();
+            tarefa.Id_Tarefa = 0;
         }
         else
         {
-            tarefa = TarefaService.GetTarefa(Guid.Parse(id));
+            tarefa = TarefaService.GetTarefa(id);
         }
     }
 
+
     private void SubmitForm()
     {
-        if(tarefa.id_Tarefa == Guid.Empty)
+        if(tarefa.Id_Tarefa == 0)
         {
             TarefaService.AddTarefa(tarefa);
         }
@@ -67,4 +74,5 @@
         }
         Navigation.NavigateTo("tarefas");
     }
+
 }

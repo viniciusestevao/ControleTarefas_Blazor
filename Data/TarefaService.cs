@@ -1,4 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+
 
 namespace ControleTarefas.Data
 {
@@ -6,51 +11,121 @@ namespace ControleTarefas.Data
     {
         private List<Tarefa> tarefas = new List<Tarefa>
         {
-            new Tarefa
-            {
-                id_Tarefa = Guid.NewGuid(),
-                ds_Titulo = "Tarefa 01"
-            },
-            new Tarefa
-            {
-                id_Tarefa = Guid.NewGuid(),
-                ds_Titulo = "Tarefa 02"
-            }
+
         };
 
        public List<Tarefa> GetTarefas()
         {
-            return tarefas;
+            using (AcessoConexao con = new AcessoConexao())
+            {
+                if (con.Conectar() == true)
+                {
+                    con.Comando.CommandText = "SELECT * FROM TBL_TAREFA ";
+
+                    SqlDataReader reader = con.EfetuarPesquisa();
+                    if (reader != null)
+                    { 
+                        while (reader.Read())
+                        {
+                            Tarefa t = null;
+                            CarregarDados(ref reader, ref t);
+                            tarefas.Add(t);
+                            t = null;
+                        }
+                        reader.Close();
+                        reader.Dispose();
+                        reader = null;
+                    }
+                    
+
+                    if (tarefas.Count.Equals(0))
+                    {
+                        return new List<Tarefa>{
+                                new Tarefa() 
+                            };
+                    }
+                }
+                else
+                {
+                    return new List<Tarefa>();
+                }
+            }
+             return tarefas;
         }
 
-        public Tarefa GetTarefa(Guid id)
+        private void CarregarDados(ref SqlDataReader reader, ref Tarefa tarefa)
         {
-            return tarefas.SingleOrDefault(x => x.id_Tarefa == id);
+            tarefa = new Tarefa();
+            tarefa.Id_Tarefa = Convert.ToSByte(reader["id_Tarefa"]);
+            tarefa.ds_Titulo = reader["ds_Titulo"].ToString();
+            tarefa.ds_Descricao = reader["ds_Descricao"].ToString().Trim();
+            tarefa.dt_Tarefa = Convert.ToDateTime(reader["dt_Tarefa"]);
+            tarefa.hr_Inicio = Convert.ToString(reader["hr_Inicio"]);
+            tarefa.hr_Fim = Convert.ToString(reader["hr_Inicio"]);
+            tarefa.cd_Prioridade = reader["cd_Prioridade"].ToString().Trim();
+            tarefa.tp_Finalizada = Convert.ToString(reader["tp_Finalizada"]);
         }
 
-        public void UpdateTarefa(Tarefa tarefa)
+        public void UpdateTarefa(Tarefa item)
         {
-            var getOldTarefa = GetTarefa(tarefa.id_Tarefa);
-            getOldTarefa.ds_Titulo = tarefa.ds_Titulo;
-            getOldTarefa.ds_Descricao = tarefa.ds_Descricao;
-            getOldTarefa.dt_Tarefa = tarefa.dt_Tarefa;
-            getOldTarefa.hr_Inicio = tarefa.hr_Inicio;
-            getOldTarefa.hr_Fim = tarefa.hr_Fim;
-            getOldTarefa.tp_Finalizada = tarefa.tp_Finalizada;
+            using (AcessoConexao con = new AcessoConexao())
+            {
+                if (con.Conectar() == true)
+                {
+                    //foreach (Tarefa item in tarefas)
+                    //{
+                        con.Comando.CommandText = "update tab_Tarefa set ds_Titulo=@dsTitulo, ds_Descricao=@dsDescricao, dt_Tarefa=@dtTarefa, hr_Inicio=@hrInicio, hr_Fim=@hrFim, cd_Prioridade=@cdPrioridade, tp_Finalizada=@tpFinalizada where id_Tarefa=@idTarefa";
+                        con.AdicionarParametros("@idTarefa", item.Id_Tarefa, System.Data.SqlDbType.Int);
+                        con.AdicionarParametros("@dsTitulo", item.ds_Titulo, System.Data.SqlDbType.VarChar);
+                        con.AdicionarParametros("@dsDescricao", item.ds_Descricao, System.Data.SqlDbType.VarChar);
+                        con.AdicionarParametros("@dtTarefa", item.dt_Tarefa, System.Data.SqlDbType.DateTime);
+                        con.AdicionarParametros("@hrInicio", item.hr_Inicio, System.Data.SqlDbType.Time);
+                        con.AdicionarParametros("@hrFim", item.hr_Fim, System.Data.SqlDbType.Time);
+                        con.AdicionarParametros("@cdPrioridade", item.cd_Prioridade, System.Data.SqlDbType.VarChar);
+                        con.AdicionarParametros("@tpFinalizada", item.tp_Finalizada, System.Data.SqlDbType.Int);
+
+                        if (con.ExecutarComando() == false)
+                        {
+                         //   return false;
+                        }
+                        con.LimparParametros();
+                    //}
+                }
+            }
+        }
+
+        public Tarefa GetTarefa(int id)
+        {
+            return tarefas.SingleOrDefault(x => x.Id_Tarefa == id);
         }
 
         public void AddTarefa(Tarefa tarefa)
         {
-            var id = Guid.NewGuid();
-            tarefa.id_Tarefa = id;
             tarefas.Add(tarefa);
         }
 
-        public void DeleteTarefa(Guid id)
+        public void DeleteTarefa(int id)
         {
-            var tarefa = GetTarefa(id);
-            tarefas.Remove(tarefa);
+            using (AcessoConexao con = new AcessoConexao())
+            {
+                if (con.Conectar() == true)
+                {
+                    con.Comando.CommandText = "delete tab_Tarefa where id_Tarefa=@idTarefa";
+                    con.AdicionarParametros("@idTarefa", id, System.Data.SqlDbType.Int);
+
+                    if (con.ExecutarComando() == false)
+                    {
+                      //  return false;
+                    }
+                    con.LimparParametros();
+
+                    var tarefa = GetTarefa(id);
+                    tarefas.Remove(tarefa);
+                }
+
+            }
         }
 
+     
     }
 }

@@ -6,12 +6,12 @@ namespace ControleTarefas.Data
     {
         List<Tarefa> GetTarefas();
 
-        Tarefa GetTarefa(Guid id);
+        Tarefa GetTarefa(int id);
 
         void UpdateTarefa(Tarefa tarefa);
 
         void AddTarefa(Tarefa tarefa);
         
-        void DeleteTarefa(Guid id);
+        void DeleteTarefa(int id);
     }
 }
