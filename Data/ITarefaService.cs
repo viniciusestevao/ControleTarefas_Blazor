@@ -8,10 +8,8 @@ namespace ControleTarefas.Data
 
         Tarefa GetTarefa(int id);
 
-        void UpdateTarefa(Tarefa tarefa);
+        string GravaTarefa(Tarefa tarefa);
 
-        void AddTarefa(Tarefa tarefa);
-        
         void DeleteTarefa(int id);
     }
 }

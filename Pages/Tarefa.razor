@@ -1,8 +1,9 @@
-﻿@page "/tarefa/{id}"
+﻿@page "/tarefa/{parIdTarefa}"
 @inject ControleTarefas.Data.ITarefaService TarefaService
 @inject NavigationManager Navigation
-
-
+@inject ILogger<Tarefa> Logger
+@using System.ComponentModel.DataAnnotations
+@inject IJSRuntime JS
 
 <h1>Editar Tarefa</h1>
 <br />
@@ -10,31 +11,47 @@
 <EditForm Model="tarefa" OnSubmit="@SubmitForm">
     <div class="form-group">
         <label>Título</label>
-        <InputText id="id" class="form-control" name="ds_Titulo" @bind="tarefa.ds_Titulo"> </InputText>      
+        <InputText id="ds_Titulo" class="form-control" name="ds_Titulo" @bind-Value="tarefa.ds_Titulo"> </InputText>      
     </div>
+    <br />
     <div class="form-group">
         <label>Descrição</label>
-        <InputText id="id" class="form-control" name="ds_Descricao" @bind="tarefa.ds_Descricao"> </InputText>      
+        <InputText id="ds_Descricao" class="form-control" name="ds_Descricao" @bind-Value="tarefa.ds_Descricao"> </InputText>      
     </div>
+    <br />
     <div class="form-group">
-        <label>Data Tarefa</label>
-        <InputText id="id" class="form-control" name="dt_Tarefa" @bind="tarefa.dt_Tarefa"> </InputText>      
+        <label>Data Tarefa</label><br />  
+        <InputDate @bind-Value="tarefa.dt_Tarefa" />
     </div>
+    <br />
     <div class="form-group">
         <label>Hora Início</label>
-        <InputText id="id" class="form-control" name="hr_Inicio" @bind="tarefa.hr_Inicio"> </InputText>      
+        <InputText id="hr_Inicio" class="form-control" name="hr_Inicio" @bind-Value="tarefa.hr_Inicio"> </InputText>      
     </div>
+    <br />
     <div class="form-group">
         <label>Hora Fim</label>
-        <InputText id="id" class="form-control" name="hr_Fim" @bind="tarefa.hr_Fim"> </InputText>      
+        <InputText id="hr_Fim" class="form-control" name="hr_Fim" @bind-Value="tarefa.hr_Fim"> </InputText>      
     </div>
-        <div class="form-group">
-        <label>Prioridade</label>
-        <InputText id="id" class="form-control" name="cd_Prioridade" @bind="tarefa.cd_Prioridade"> </InputText>      
+    <br />
+    <div class="form-group">
+        <label>Prioridade</label> <br />
+        <InputRadioGroup @bind-Value="tarefa.cd_Prioridade">
+            @foreach (var option in opcoesPrioridade)
+            {
+                <InputRadio Value="option" /> @option <br />
+            }
+        </InputRadioGroup>
     </div>
-        <div class="form-group">
-        <label>Finalizada ?</label>
-        <InputText id="id" class="form-control" name="tp_Finalizada" @bind="tarefa.tp_Finalizada"> </InputText>      
+    <br />
+    <div class="form-group">
+        <label>Finalizada ?</label> <br />
+        <InputRadioGroup @bind-Value="tarefa.tp_Finalizada">
+            @foreach (var option in opcoesFinalizada)
+            {
+                <InputRadio Value="option" /> @option <br />
+            }
+        </InputRadioGroup>    
     </div>
     <br /><button type="submit" class="btn btn-success">Gravar</button>
 </EditForm>
@@ -43,36 +60,42 @@
 
 @code {
     [Parameter]
-    public int id { get; set; }
+    public string parIdTarefa { get; set; }
 
     private ControleTarefas.Data.Tarefa tarefa { get; set; }
+
+    private List<string> opcoesPrioridade = new List<string> { "Baixa", "Média", "Alta" } ;
+    private List<string> opcoesFinalizada = new List<string> { "Não", "Sim" } ;
 
 
     protected override void OnInitialized()
     {
-        if (id == 0)
+        if (parIdTarefa == "0")
         {
             tarefa = new Data.Tarefa();
             tarefa.Id_Tarefa = 0;
+            tarefa.dt_Tarefa = DateTime.Now;
+            tarefa.cd_Prioridade = "Média";
+            tarefa.cd_Prioridade = "Não";
         }
         else
         {
-            tarefa = TarefaService.GetTarefa(id);
+            tarefa = TarefaService.GetTarefa(Convert.ToSByte(parIdTarefa));
         }
     }
 
-
     private void SubmitForm()
     {
-        if(tarefa.Id_Tarefa == 0)
+        string msg;
+        msg = TarefaService.GravaTarefa(tarefa);
+        if (msg != "")
         {
-            TarefaService.AddTarefa(tarefa);
+          //  JS.InvokeAsync<string>("displayTickerAlert2", msg, "Alerta");
         }
         else
         {
-            TarefaService.UpdateTarefa(tarefa);
+           Navigation.NavigateTo("tarefas");
         }
-        Navigation.NavigateTo("tarefas");
     }
 
 }

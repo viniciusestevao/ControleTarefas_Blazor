@@ -25,7 +25,7 @@
             <tr>
                 <td>@tarefa.ds_Titulo</td>
                 <td>@tarefa.ds_Descricao</td>
-                <td>@tarefa.dt_Tarefa</td>
+                <td>@Convert.ToString(tarefa.dt_Tarefa).Substring(0,@Convert.ToString(tarefa.dt_Tarefa).Length-9)</td>
                 <td>@tarefa.hr_Inicio</td>
                 <td>@tarefa.hr_Fim</td>
                 <td>@tarefa.cd_Prioridade</td>
@@ -42,9 +42,9 @@
 </table>
 
 
-
 @code {
     private List<ControleTarefas.Data.Tarefa> tarefas;
+
 
     protected override void OnInitialized()
     {

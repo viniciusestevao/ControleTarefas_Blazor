@@ -69,6 +69,53 @@ main[b-emvlc6c4j6] {
         padding-right: 1.5rem !important;
     }
 }
+
+.toast[b-emvlc6c4j6] {
+    display: none;
+    padding: 1.5 rem;
+    color: #fff;
+    z - index: 1;
+    position: absolute;
+    width: 25 rem;
+    top: 2 rem;
+    border - radius: 1 rem;
+    left: 50 %;
+}
+
+    .toast - icon[b-emvlc6c4j6] {
+        display: flex;
+        flex - direction: column;
+        justify - content: center;
+        padding: 0 1 rem;
+        font - size: 2.5 rem;
+    }
+
+    .toast - body[b-emvlc6c4j6] {
+        display: flex;
+        flex - direction: column;
+        flex: 1;
+        padding - left: 1 rem;
+    }
+
+        .toast - body p[b-emvlc6c4j6] {
+            margin - bottom: 0;
+        }
+
+    .toast - visible[b-emvlc6c4j6] {
+        display: flex;
+        flex - direction: row;
+        animation: fadein-b-emvlc6c4j6 1.5 s;
+    }
+
+@keyframes fadein-b-emvlc6c4j6 {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
 /* _content/ControleTarefas/Shared/NavMenu.razor.rz.scp.css */
 .navbar-toggler[b-soxmwefi5s] {
     background-color: rgba(255, 255, 255, 0.1);
